@@ -10,6 +10,7 @@ const TabPane = Tabs.TabPane
 const EnumPostStatus = {
   UNPUBLISH: 1,
   PUBLISHED: 2,
+  BENEFICIARY: 3,
 }
 
 
@@ -33,6 +34,25 @@ const Index = ({ post, dispatch, loading, location }) => {
     },
   }
 
+  const listBeneficiaries = {
+    fetch: {
+      url: 'http://10.1.171.229:9090/api/openaccount/getOpenAccountData',
+      data: {
+        processInstanceId: 'c5',
+        type: 'bfs',
+      },
+      dataKey: 'data',
+    },
+    columns: [
+      { title: '受益人证件号', dataIndex: 'beneficiaryIdno' },
+      { title: '受益人证件类型', dataIndex: 'beneficiaryIdtp' },
+      { title: '受益人姓名', dataIndex: 'beneficiaryName' },
+      { title: '受益人电话', dataIndex: 'beneficiaryTel' },
+      { title: '状态', dataIndex: 'status' }
+    ],
+    rowKey: 'id',
+  }
+
   const handleTabClick = (key) => {
     dispatch(routerRedux.push({
       pathname,
@@ -44,12 +64,24 @@ const Index = ({ post, dispatch, loading, location }) => {
 
 
   return (<div className="content-inner">
-    <Tabs activeKey={query.status === String(EnumPostStatus.UNPUBLISH) ? String(EnumPostStatus.UNPUBLISH) : String(EnumPostStatus.PUBLISHED)} onTabClick={handleTabClick}>
+    <Tabs activeKey={
+      String(EnumPostStatus.BENEFICIARY)
+/*      if(query.status === String(EnumPostStatus.UNPUBLISH))
+        String(EnumPostStatus.UNPUBLISH)
+      else if(query.status === String(EnumPostStatus.PUBLISHED))
+        String(EnumPostStatus.PUBLISHED)
+      else if(query.status === String(EnumPostStatus.BENEFICIARY))
+        String(EnumPostStatus.BENEFICIARY)*/
+      //query.status === String(EnumPostStatus.UNPUBLISH) ? String(EnumPostStatus.UNPUBLISH) : String(EnumPostStatus.PUBLISHED)
+    } onTabClick={handleTabClick}>
       <TabPane tab="Publised" key={String(EnumPostStatus.PUBLISHED)}>
         <List {...listProps} />
       </TabPane>
       <TabPane tab="Unpublish" key={String(EnumPostStatus.UNPUBLISH)}>
         <List {...listProps} />
+      </TabPane>
+      <TabPane tab="受益人" key={String(EnumPostStatus.BENEFICIARY)}>
+        <List {...listBeneficiaries} />
       </TabPane>
     </Tabs>
   </div>)
